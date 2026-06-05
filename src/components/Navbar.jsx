@@ -1,66 +1,104 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const handleClick = () => {
-    setIsOpen(false);
-  };
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", h);
+    return () => window.removeEventListener("scroll", h);
+  }, []);
+
+  const links = ["home", "about", "skills", "whatIuse", "contact"];
 
   return (
-    <nav className="fixed w-full bg-black text-white z-50 shadow-md">
-      <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-        
-        <h1 className="text-xl font-bold text-green-400">
+    <>
+      <motion.nav
+        initial={{ y: -80 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        style={{
+          position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+          padding: scrolled ? "14px 32px" : "22px 32px",
+          background: scrolled ? "rgba(8,8,8,0.9)" : "transparent",
+          backdropFilter: scrolled ? "blur(20px)" : "none",
+          borderBottom: scrolled ? "1px solid #1a1a1a" : "1px solid transparent",
+          transition: "all 0.4s ease",
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}
+      >
+        <span style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: 22, letterSpacing: 4, color: "#b5f23d" }}>
           SINAN
-        </h1>
+        </span>
 
-   
-        <ul className="hidden md:flex items-center space-x-8">
-          <li>
-            <a href="#home" className="hover:text-green-400">Home</a>
-          </li>
-          <li>
-            <a href="#about" className="hover:text-green-400">About Me</a>
-          </li>
-          <li>
-            <a href="#skills" className="hover:text-green-400">Skills</a>
-          </li>
-          <li>
-            <a href="#whatIuse" className="hover:text-green-400">What I Use</a>
-          </li>
-
-          <a href="#contact">
-            <button className="border rounded-full text-black px-6 py-2 bg-white hover:bg-green-400 transition">
-              Contact Me
-            </button>
-          </a>
+        {/* Desktop links */}
+        <ul style={{ display: "flex", gap: 32, listStyle: "none", alignItems: "center" }} className="nav-desktop">
+          {links.map((l) => (
+            <li key={l}>
+              <a href={`#${l}`} className="nav-link">
+                {l === "whatIuse" ? "Stack" : l}
+              </a>
+            </li>
+          ))}
         </ul>
 
-        
-        <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
-      </div>
+        {/* Hamburger */}
+        <button
+          onClick={() => setOpen(!open)}
+          style={{ background: "none", border: "none", color: "#f0ede8", cursor: "pointer", display: "flex" }}
+        >
+          {open ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </motion.nav>
 
-    
-      {isOpen && (
-        <div className="md:hidden bg-black px-6 pb-6 flex flex-col space-y-6 text-center">
-          <a href="#home" onClick={handleClick} className="hover:text-green-400">Home</a>
-          <a href="#about" onClick={handleClick} className="hover:text-green-400">About Me</a>
-          <a href="#skills" onClick={handleClick} className="hover:text-green-400">Skills</a>
-          <a href="#whatIuse" onClick={handleClick} className="hover:text-green-400">What I Use</a>
-<a href="#contact">
-  <button className="px-6 py-2 bg-white rounded-lg text-black">
-    Contact
-  </button>
-</a>
-        </div>
-      )}
-    </nav>
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            style={{
+              position: "fixed", inset: 0, zIndex: 99,
+              background: "rgba(8,8,8,0.97)",
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center", gap: 40,
+            }}
+          >
+            {links.map((l, i) => (
+              <motion.a
+                key={l} href={`#${l}`} onClick={() => setOpen(false)}
+                initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.08 }}
+                style={{
+                  fontFamily: "'Bebas Neue',sans-serif", fontSize: 48,
+                  letterSpacing: 4, color: "#f0ede8", textDecoration: "none",
+                }}
+              >
+                {l === "whatIuse" ? "STACK" : l.toUpperCase()}
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <style>{`
+        .nav-link {
+          position: relative; color: #888; font-size: 13px;
+          font-weight: 600; letter-spacing: 0.1em; text-decoration: none;
+          text-transform: uppercase; transition: color 0.3s; font-family: 'Syne', sans-serif;
+        }
+        .nav-link::after {
+          content: ''; position: absolute; bottom: -4px; left: 0;
+          width: 0; height: 1px; background: #b5f23d; transition: width 0.3s ease;
+        }
+        .nav-link:hover { color: #f0ede8; }
+        .nav-link:hover::after { width: 100%; }
+        .nav-desktop { display: flex; }
+        @media(max-width: 768px) { .nav-desktop { display: none !important; } }
+      `}</style>
+    </>
   );
 };
 

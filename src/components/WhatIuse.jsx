@@ -2,53 +2,76 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const WhatIuse = () => {
-  const language = [
+  const techs = [
     { title: "REACT", icon: "/images/react.png" },
-    { title: "JS", icon: "/images/js.png" },
-    { title: "HTML", icon: "/images/html-5.png" },
-    { title: "CSS", icon: "/images/css-3.png" }
+    { title: "JS",    icon: "/images/js.png" },
+    { title: "HTML",  icon: "/images/html-5.png" },
+    { title: "CSS",   icon: "/images/css-3.png" },
   ];
+
+  // Double the array for seamless loop
+  const doubled = [...techs, ...techs, ...techs, ...techs];
 
   return (
     <section
       id="whatIuse"
-      className="scroll-mt-24 py-20 bg-black overflow-hidden"
+      style={{ padding: "120px 0", scrollMarginTop: 80, overflow: "hidden" }}
     >
-  
-      <div className="border-[3px] border-white px-10 py-3 bg-black mb-16 w-fit mx-auto">
-        <h2 className="text-xl font-bold uppercase tracking-[0.5em] text-white">
-          What I Use
-        </h2>
+      {/* Header */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", marginBottom: 64 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="section-tag">03 — Stack</div>
+          <h2 className="bebas" style={{ fontSize: "clamp(48px,6vw,80px)" }}>
+            TOOLS &<br /><span style={{ color: "#b5f23d" }}>TECHNOLOGIES</span>
+          </h2>
+        </motion.div>
       </div>
 
- 
-      <div className="relative w-full overflow-hidden">
-        <motion.div
-          className="flex gap-16 w-max"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{
-            repeat: Infinity,
-            duration: 12,
-            ease: "linear"
-          }}
-        >
-       
-          {[...language, ...language].map((tech, index) => (
-            <div key={index} className="flex flex-col items-center min-w-37.5">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-50 rounded-xl flex items-center justify-center mb-4 shadow-sm border border-gray-100">
-                <img
-                  src={tech.icon}
-                  alt={tech.title}
-                  className="w-12 h-12 md:w-16 md:h-16 object-contain"
-                />
+      {/* Marquee forward */}
+      <div style={{
+        borderTop: "1px solid #111", borderBottom: "1px solid #111",
+        padding: "32px 0", overflow: "hidden",
+      }}>
+        <div style={{ display: "flex", width: "max-content", animation: "marquee 20s linear infinite" }}>
+          {doubled.map((t, i) => (
+            <div key={i} style={{
+              display: "flex", alignItems: "center", gap: 20,
+              padding: "0 40px", flexShrink: 0,
+            }}>
+              <div style={{
+                width: 64, height: 64, background: "#0f0f0f",
+                borderRadius: 16, border: "1px solid #1a1a1a",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <img src={t.icon} alt={t.title} style={{ width: 36, height: 36, objectFit: "contain" }} />
               </div>
-
-              <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-gray-500">
-                {tech.title}
-              </span>
+              <span className="bebas" style={{ fontSize: 24, letterSpacing: 3, color: "#333" }}>{t.title}</span>
+              <span style={{ color: "#222", fontSize: 20 }}>✦</span>
             </div>
           ))}
-        </motion.div>
+        </div>
+      </div>
+
+      {/* Marquee reverse */}
+      <div style={{ overflow: "hidden", padding: "24px 0", borderBottom: "1px solid #111" }}>
+        <div style={{
+          display: "flex", width: "max-content",
+          animation: "marquee 28s linear infinite reverse",
+        }}>
+          {doubled.map((t, i) => (
+            <div key={i} style={{
+              display: "flex", alignItems: "center", gap: 16,
+              padding: "0 32px", flexShrink: 0,
+            }}>
+              <span className="bebas" style={{ fontSize: 18, letterSpacing: 4, color: "#1d1d1d" }}>{t.title}</span>
+              <span style={{ color: "#1a1a1a" }}>—</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
